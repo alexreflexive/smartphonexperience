@@ -15,6 +15,10 @@
             /* border:1px solid black */
         }
 
+        td {
+            font-size: 1.2em;
+        }
+
         th {
             text-align: left;
             font-size: 1.6em;
@@ -37,14 +41,15 @@
     <table style="width:60%;margin:auto;">
         <h1 style="text-align: center;">eVision Evolution</h1>
         <tr>
-            <th colspan="2">Affichage sur smartphone</th>
+            <th colspan="2">Affichage de la webcam par rapport à l'iPhone.</th>
         </tr>
         <tr>
             <th>
                 <a href="webcam/intervall.html">Interval</a>
             </th>
             <td>
-                Simple dessin sur canevas.
+                Le dessin sur le canevas est pilotée par intervall(), de la façon la plus simple possible. Avec
+                défilement de collection d'images.
             </td>
         </tr>
 
@@ -53,7 +58,32 @@
                 <a href="webcam/framerequest.html">requestAnimationFrame</a>
             </th>
             <td>
-                Simple dessin sur canevas.
+                Le dessin par requestAnimationFrame(), de la façon la plus simple possible. Avec défilement de
+                collection d'images.
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2">Différentes stratégies de matching entre deux images fixes.</th>
+        </tr>
+
+        <tr>
+            <th colspan="2">Stratégies pure JSFeat de matching webcam/collection d'images.</th>
+        </tr>
+        <tr>
+            <th>
+                <a href="webcammatching_tr_jsfeat/intervall.html">Interval</a>
+            </th>
+            <td>
+                Le dessin sur le canevas est pilotée par intervall(), de la façon la plus simple possible.
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                <a href="webcammatching_tr_jsfeat/framerequest.html">requestAnimationFrame</a>
+            </th>
+            <td>
+                Le dessin par requestAnimationFrame(), de la façon la plus simple possible.
             </td>
         </tr>
 
