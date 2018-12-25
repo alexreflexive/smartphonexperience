@@ -36,10 +36,6 @@
             var canvas = document.getElementById('canvas');
             var context = canvas.getContext('2d');
 
-            // canvas.width = videoWidth;
-            // canvas.height = videoHeight;
-
-
             if (navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({
                     audio: false,
@@ -54,11 +50,14 @@
 
             /* Canvas 1 */
             intervall = window.setInterval(function () {
+                images[2].width = images[2].width * videoHeight / images[2].height;
+                images[2].height = videoHeight;
 
-                canvas.width = videoWidth;
+                canvas.width = videoWidth + images[2].width;
                 canvas.height = videoHeight;
+
                 context.drawImage(webcam, 0, 0, videoWidth, videoHeight);
-                // Du code.
+                context.drawImage(images[2], videoWidth, 0, images[2].width, images[2].height);
             }, 20);
         }
 
