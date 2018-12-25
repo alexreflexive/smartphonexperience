@@ -27,16 +27,17 @@
 
     <script>
         window.onload = function () {
+            var index = 0;
             var webcam = document.getElementById('webcam');
             var videoWidth = Number(webcam.attributes.width.value);
             var videoHeight = Number(webcam.attributes.height.value);
 
             var canvas = document.getElementById('canvas');
-
-            canvas.width = videoWidth;
-            canvas.height = videoHeight;
-
             var context = canvas.getContext('2d');
+
+            // canvas.width = videoWidth;
+            // canvas.height = videoHeight;
+
 
             if (navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({
@@ -53,7 +54,9 @@
             requestAnimationFrame(tick);
             function tick() {
                 window.requestAnimationFrame(tick);
-                context.drawImage(webcam, 0, 0, 640, 480);
+                canvas.width = videoWidth;
+                canvas.height = videoHeight;
+                context.drawImage(webcam, 0, 0, videoWidth, videoHeight);
                 // Du code.
             }
         }
