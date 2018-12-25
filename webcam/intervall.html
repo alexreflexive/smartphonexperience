@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Webcam base intervalle</title>
+</head>
+
+<body>
+    <h1>Webcam base intervalle</h1>
+    <div id='container'>
+        <video id='webcam' width='640' height='480' autoplay playsinline style="border:3px solid brown"></video>
+        <div id="canvasContainer">
+            <canvas id='canvas' style="border:3px solid blue"></canvas>
+        </div>
+    </div>
+
+    <script>
+        var webcam = document.getElementById('webcam');
+        var videoWidth = Number(webcam.attributes.width.value);
+        var videoHeight = Number(webcam.attributes.height.value);
+
+        var canvas = document.getElementById('canvas');
+
+        canvas.width = videoWidth;
+        canvas.height = videoHeight;
+
+        var context = canvas.getContext('2d');
+
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    facingMode: 'environment'
+                }
+            })
+                .then(function (stream) {
+                    webcam.srcObject = stream;
+                })
+        }
+
+        /* Canvas 1 */
+        intervall = window.setInterval(function () {
+            context.drawImage(webcam, 0, 0, videoWidth, videoHeight);
+            // Du code.
+        }, 20);
+
+
+
+    </script>
+</body>
+
+</html>
