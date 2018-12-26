@@ -9,31 +9,28 @@
     <style>
         .masquer {
             /* A ajouter à div#canvasContainer pour masquer le canevas webcam+image */
-            /*max-height: 0px;
-            overflow: hidden;*/
-            display:none;
+            max-height: 0px;
+            overflow: hidden;
         }
     </style>
 </head>
 
 <body>
-    <h1>Webcam base intervalle</h1>
-
     <!-- Conteneur de la webcam affichée et du canevas normalement masqué. -->
     <div id='container' style="text-align:center;margin-top:25px">
         <video id='webcam' width='640' height='480' autoplay playsinline></video>
         <div id="canvasContainer" class="masquer">
-            <canvas id='canvas' style="border:3px solid blue"></canvas>
+            <canvas id='canvas'></canvas>
         </div>
     </div>
-    <script src="js/images.js"></script>
 
     <script>
+        var image = new Image();
+        image.src="images/image.jpg";
         window.onload = function () {
-            var index = 0;
             var webcam = document.getElementById('webcam');
-            var videoWidth = Number(webcam.attributes.width.value);
-            var videoHeight = Number(webcam.attributes.height.value);
+            var videoWidth = Number(webcam.width);
+            var videoHeight = Number(webcam.height);
 
             var canvas = document.getElementById('canvas');
             var context = canvas.getContext('2d');
@@ -53,20 +50,16 @@
 
             // Gestion du flux d'images, le dessin du flux et des images sur le canevas.
             intervall = window.setInterval(function () {
-                images[index].width = images[index].width * videoHeight / images[index].height;
-                images[index].height = videoHeight;
 
-                canvas.width = videoWidth + images[index].width;
+                image.width = image.width * videoHeight / image.height;
+                image.height = videoHeight;
+
+                canvas.width = videoWidth + image.width;
                 canvas.height = videoHeight;
 
                 context.drawImage(webcam, 0, 0, videoWidth, videoHeight);
-                context.drawImage(images[index], videoWidth, 0, images[index].width, images[index].height);
+                context.drawImage(image, videoWidth, 0, image.width, image.height);
 
-                if (index >= images.length - 1) {
-                    index = 0;
-                } else {
-                    index++;
-                }
             }, 20);
         }
 
