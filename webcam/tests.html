@@ -9,8 +9,9 @@
     <style>
         .masquer {
             /* A ajouter à div#canvasContainer pour masquer le canevas webcam+image */
-            max-height: 0px;
-            overflow: hidden;
+            /*max-height: 0px;
+            overflow: hidden;*/
+            display:none;
         }
     </style>
 </head>
@@ -21,7 +22,7 @@
     <!-- Conteneur de la webcam affichée et du canevas normalement masqué. -->
     <div id='container' style="text-align:center;margin-top:25px">
         <video id='webcam' width='640' height='480' autoplay playsinline></video>
-        <div id="canvasContainer" class="">
+        <div id="canvasContainer" class="masquer">
             <canvas id='canvas' style="border:3px solid blue"></canvas>
         </div>
     </div>
