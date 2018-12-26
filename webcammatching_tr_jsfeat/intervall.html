@@ -72,9 +72,68 @@
                     index++;
                 }
 
+                // Appel à la bibliothèque eVision
                 var matches = evision.tracking.getMatches(context, videoWidth, videoHeight, images[index].width, images[index].height, showtemplates);
-                console.log(matches);
+                var good_matches = find_transform(matches, matches.length);
+                console.log(good_matches);
+                if (good_matches > 10) {
+                    var msg = images[index].title;
+                    // messageBox.innerHTML = "J'ai trouvé <em><strong>" + msg + "</strong></em> !";
+                    console.log(msg);
+                    alert(msg);
+                }
             }, 20);
+
+
+            var homo3x3 = new jsfeat.matrix_t(3, 3, jsfeat.F32C1_t);
+            var match_mask = new jsfeat.matrix_t(500, 1, jsfeat.U8C1_t);
+
+
+            function find_transform(matches, count) {
+                // console.log("find_transform");
+
+                // motion kernel
+                var mm_kernel = new jsfeat.motion_model.homography2d();
+                // ransac params
+                var num_model_points = 4;
+                var reproj_threshold = 3;
+                var ransac_param = new jsfeat.ransac_params_t(num_model_points,
+                    reproj_threshold, 0.5, 0.99);
+
+                var pattern_xy = [];
+                var screen_xy = [];
+
+                // construct correspondences
+                for (var i = 0; i < count; ++i) {
+                    var m = matches[i];
+                    pattern_xy[i] = { "x": m.keypoint1[0], "y": m.keypoint1[1] };
+                    screen_xy[i] = { "x": m.keypoint2[0], "y": m.keypoint2[1] };
+                }
+
+                // estimate motion
+                var ok = false;
+                ok = jsfeat.motion_estimator.ransac(ransac_param, mm_kernel,
+                    pattern_xy, screen_xy, count, homo3x3, match_mask, 1000);
+
+                var pattern_xy2 = [];
+                var screen_xy2 = [];
+                // extract good matches and re-estimate
+                var good_cnt = 0;
+                if (ok) {
+                    for (var i = 0; i < count; ++i) {
+                        if (match_mask.data[i]) {
+                            pattern_xy2[good_cnt] = { "x": pattern_xy[i].x, "y": pattern_xy[i].y };
+                            screen_xy2[good_cnt] = { "x": screen_xy[i].x, "y": screen_xy[i].y };
+                            good_cnt++;
+                        }
+                    }
+                    // run kernel directly with inliers only
+                    mm_kernel.run(pattern_xy2, screen_xy2, homo3x3, good_cnt);
+                } else {
+                    jsfeat.matmath.identity_3x3(homo3x3, 1.0);
+                }
+                return good_cnt;
+            }
         }
 
 
