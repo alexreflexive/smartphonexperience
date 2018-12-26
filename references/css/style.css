@@ -1,0 +1,92 @@
+#menu a {
+    margin-left: 20px;
+}
+
+a {
+    color: darkred;
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(97, 34, 4);
+    text-decoration: underline;
+}
+
+pre{
+    border:1px solid gray;
+    background-color: lightgray;
+    overflow: auto;
+    padding:10px 10px 10px 0px;
+}
+
+/* *** COURS *** */
+.centerdisplay{
+    /* height:100vh; */
+    text-align:center;
+    margin-top:15%;
+}
+
+canvas, video{
+}
+
+.menucontainer{
+    position: fixed;
+    padding:25px;
+    right:5px;
+    top:5px;
+    border:1px solid gray;
+    border-radius: 5px;
+    background-color: rgba(5,5,5,0.2);
+    /* Voir à l'occasion la propriété scroll-behavior. */
+}
+
+.open {
+    display: inherit;
+    overflow-y: scroll;
+    height:80vh;
+}
+
+.closed {
+    display: none;
+    /* overflow:scroll; */
+
+}
+
+.navigation{
+    padding:1px;
+}
+
+.navigation li{
+    list-style: none;
+    margin-left:0;
+}
+
+.sousnavigation{
+    margin-left:-25px;
+}
+
+#menubutton{
+        background-color: rgba(5,5,5,0);
+        border: none;
+        color: white;
+        padding: 10px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+
+    }
+    
+.btn_open, .btn_closed{
+    background-repeat: no-repeat, repeat;
+    background-size: cover;
+}
+
+.btn_open{
+    background-image: url('../images/close.png');
+      
+}
+
+.btn_closed{
+    background-image: url('../images/menu.png');
+}
