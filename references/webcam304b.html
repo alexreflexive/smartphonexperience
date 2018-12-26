@@ -1,0 +1,344 @@
+
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="A JavaScript Computer Vision Library">
+        <meta name="author" content="Eugene Zatepyakin">
+        <title>Webcam 304 B</title>
+        <style>
+            /* The Modal (background) */
+            .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content/Box */
+            .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            }
+
+            /* The Close Button */
+            .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+            }
+        </style>        
+        <script src="js/tracking.js"></script>
+        <script src="js/jsfeat.js"></script>
+        <script src="js/evision.js"></script>
+    </head>
+    <body>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div id="inModal" class="modal-content">
+                <span class="close">&times;</span>
+                <p id="liensite">Some text in the Modal..</p>
+                <!-- <iframe width='640' height='360' src='https://www.youtube.com/embed/RTMUSfsRHoc' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe> -->
+            </div>
+        </div>
+
+
+
+        <video id="webcam" width="320" height="240" style="display:none;" playsinline></video>
+        <video id="webcam2" width="320" height="240" playsinline></video>
+        <!-- <video id="webcam" style="display:none;" playsinline></video> -->
+        <!-- <div id="container" style=" widows: 640px;height:480px;margin: 10px 10px;display:none;"> -->
+        <div id="container" style="margin: 10px 10px;display:none;">
+                <canvas id="canvas" width="320" height="240"></canvas>
+        </div>
+
+        <script type="text/javascript">
+        var index=0 ;
+        var images = [];
+        images[0] = new Image();
+        images[1] = new Image();
+        images[2] = new Image();
+        images[3] = new Image();
+        images[4] = new Image();
+        images[5] = new Image();
+        images[0].src = 'images/image.jpg';
+        images[1].src = 'images/photo.jpg';
+        images[2].src = 'images/iconographie.jpg';
+        images[3].src = 'images/pictogramme.jpg';
+        images[4].src = 'images/illustration.jpg';
+        images[5].src = 'images/graphisme.jpg';
+        images[0].title = "Il était une fois dans l'Ouest";
+        images[1].title = 'Les Dents de la mer';
+        images[2].title = 'Indiana Jones';
+        images[3].title = 'Grease';
+        images[4].title = 'Le Parrain';
+        images[5].title = 'Star Wars';
+
+        var infos = [] ;
+        infos[0]={'site':'http://www.2gsi.fr', 'media':'https://www.youtube.com/embed/RTMUSfsRHoc', 'nom': "Il était une fois dans l'Ouest"}
+        infos[1]={'site':'http://www.2gsi.fr', 'media':'https://www.youtube.com/embed/tVV6prHhyMQ', 'nom': "Les Dents de la mer"}
+        infos[2]={'site':'http://www.2gsi.fr', 'media':'https://www.youtube.com/embed/RTMUSfsRHoc', 'nom': "Indiana Jones"}
+        infos[3]={'site':'http://www.2gsi.fr', 'media':'https://www.youtube.com/embed/2j17nSmVghI', 'nom': "Grease"}
+        infos[4]={'site':'http://www.2gsi.fr', 'media':'https://www.youtube.com/embed/X6OJ7MD9YDU', 'nom': "Le Parrain"}
+        infos[5]={'site':'http://www.2gsi.fr', 'media':'https://www.youtube.com/embed/RTMUSfsRHoc', 'nom': "Star Wars"}
+
+
+        window.onload = function(){    
+            "use strict";
+            console.log('window onload');
+
+            var hmax = screen.height;
+            var wmax = screen.width;
+
+            //alert(wmax + '/' + hmax);
+
+            var video = document.getElementById('webcam');
+            var video2 = document.getElementById('webcam2');
+            var canvas = document.getElementById('canvas');
+            var context ;
+
+            video2.setAttribute("width",wmax);
+            video2.setAttribute("height",hmax);
+
+            if(video.attributes.width){
+                var videoWidth = Number(video.attributes.width.value) ;
+            }else{
+                var videoWidth = 320 ;
+            }
+            if(video.attributes.height){
+                var videoHeight = Number(video.attributes.height.value) ;
+            }else{
+                var videoHeight = 240 ;
+            }
+            
+            demo_app(640, 480);
+            requestAnimationFrame(tick);
+
+                getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                }, function(stream) {
+                    try {
+                        video.srcObject = stream;
+                        video2.srcObject = stream;
+                    } catch (error) {
+                        video.src = stream;
+                        video2.src = stream;
+                    }
+                    setTimeout(function() {
+                        video.play();
+                        video2.play();
+                    }, 500);
+                }, function (error) {
+                    console.log("WebRTC not available.");
+                    console.error(error);
+                });
+
+            function demo_app(videoWidth, videoHeight) {
+                console.log("demo app") ;
+                // ctx = canvas.getContext('2d');
+                context = canvas.getContext('2d');
+            }
+
+            function tick() {
+                // console.log(index) ;
+                // console.log(index, images[index].width, images[index]. height)
+                images[index].width = images[index].width * videoHeight / images[index]. height ;
+                images[index].height = videoHeight;
+                var canvasWidth  = videoWidth + images[index].width;
+                var canvasHeight = videoHeight;
+                canvas.width  = canvasWidth;
+                canvas.height = canvasHeight;
+
+               
+                requestAnimationFrame(tick);
+
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+
+                    context.drawImage(video, 0, 0, videoWidth, videoHeight);
+                    context.drawImage(images[index], videoWidth, 0, images[index].width, images[index].height);
+                    var matches = evision.tracking.getMatches(context, videoWidth, videoHeight, images[index].width, images[index].height)
+                    var good_matches = find_transform(matches, matches.length) ;
+                    // if(good_matches>10){
+                    if(good_matches>8){
+                        // var msg = images[index].title;
+                        // messageBox.innerHTML="J'ai trouvé <em><strong>" + msg + "</strong></em> !";
+                        // console.log(msg);
+                        // alert(msg);
+                        var modalStyle = document.getElementById('myModal') ;
+                        if(modalStyle.style.display=='none' || modalStyle.style.display=='' ){
+                            success(infos[index]) ;
+                        }
+
+                    }                  
+                }
+
+                if(index>=images.length-1){
+                    index=0 ;
+                }else{
+                    index++ ;
+                }
+            }
+
+
+        var homo3x3 = new jsfeat.matrix_t(3, 3, jsfeat.F32C1_t);
+        var match_mask = new jsfeat.matrix_t(500, 1, jsfeat.U8C1_t);
+
+
+        function find_transform(matches, count) {
+            // console.log("find_transform");
+
+            // motion kernel
+            var mm_kernel = new jsfeat.motion_model.homography2d();
+            // ransac params
+            var num_model_points = 4;
+            var reproj_threshold = 3;
+            var ransac_param = new jsfeat.ransac_params_t(num_model_points,
+                reproj_threshold, 0.5, 0.99);
+
+            var pattern_xy = [];
+            var screen_xy = [];
+
+            // construct correspondences
+            for (var i = 0; i < count; ++i) {
+                var m = matches[i];
+                pattern_xy[i] = { "x": m.keypoint1[0], "y": m.keypoint1[1] };
+                screen_xy[i] = { "x": m.keypoint2[0], "y": m.keypoint2[1] };
+            }
+
+            // estimate motion
+            var ok = false;
+            ok = jsfeat.motion_estimator.ransac(ransac_param, mm_kernel,
+                pattern_xy, screen_xy, count, homo3x3, match_mask, 1000);
+
+            var pattern_xy2 = [];
+            var screen_xy2 = [];
+            // extract good matches and re-estimate
+            var good_cnt = 0;
+            if (ok) {
+                for (var i = 0; i < count; ++i) {
+                    if (match_mask.data[i]) {
+                        pattern_xy2[good_cnt] = { "x": pattern_xy[i].x, "y": pattern_xy[i].y };
+                        screen_xy2[good_cnt] = { "x": screen_xy[i].x, "y": screen_xy[i].y };
+                        good_cnt++;
+                    }
+                }
+                // run kernel directly with inliers only
+                mm_kernel.run(pattern_xy2, screen_xy2, homo3x3, good_cnt);
+            } else {
+                jsfeat.matmath.identity_3x3(homo3x3, 1.0);
+            }
+            return good_cnt;
+        }
+
+
+
+            // Compatibilité de la webcam avec différents navigateurs
+            function getUserMedia (options, success, error) {
+                var getUserMedia =
+                    window.navigator.getUserMedia ||
+                    window.navigator.mozGetUserMedia ||
+                    window.navigator.webkitGetUserMedia ||
+                    window.navigator.msGetUserMedia ||
+                    function(options, success, error) {
+                        error();
+                    };
+                return getUserMedia.call(window.navigator, options, success, error);
+            };
+
+            function requestAnimationFrame (callback, element) {
+                var requestAnimationFrame =
+                    window.requestAnimationFrame        || 
+                    window.webkitRequestAnimationFrame  || 
+                    window.mozRequestAnimationFrame     || 
+                    window.oRequestAnimationFrame       ||
+                    window.msRequestAnimationFrame      ||
+                    function(callback, element) {
+                        var currTime = new Date().getTime();
+                        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                        var id = window.setTimeout(function() {
+                            callback(currTime + timeToCall);
+                        }, timeToCall);
+                        lastTime = currTime + timeToCall;
+                        return id;
+                    };
+
+                return requestAnimationFrame.call(window, callback, element);
+            };
+
+            window.addEventListener('unload', function(event) {
+                // console.log('addEventListener unload');
+                video.pause();
+                video.src=null;
+            });
+        }
+
+        function success(info){
+            var modal = document.getElementById('myModal');
+            var inModal = document.getElementById('inModal');
+            var lien = document.getElementById('liensite');
+            lien.innerHTML="<a href='http://www.2gsi.fr'>"+info.nom+"</a>";
+            console.log(info, lien);
+
+
+            var iframe = document.createElement('iframe');
+                iframe.id="videoDisplay";
+                iframe.width="640";
+                iframe.height="360";
+                // iframe.src="../../videos/video_/movie.mp4";
+                // iframe.src="https://www.youtube.com/embed/RTMUSfsRHoc";
+                iframe.src=info.media ;
+                iframe.autoplay=1;
+                iframe.playsinline=1;
+                inModal.appendChild(iframe);
+                console.log(iframe);
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on the button, open the modal 
+            modal.style.display = "block";
+
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+                inModal.removeChild(iframe);
+                lien.innerHTML="";
+                modal.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                console.log(inModal);
+                if (event.target == modal) {
+                    inModal.removeChild(iframe);
+                    lien.innerHTML="";
+                    modal.style.display = "none";
+                }
+            }            
+        }
+
+        </script>
+    </body>
+</html>
