@@ -44,11 +44,13 @@
             }
             /* Modal Content/Box */
             .modal-content {
-            background-color: rgba(255,255,255,0.3);
+            background-color: rgba(255,255,255,0);
             margin: 15% auto; /* 15% from the top and centered */
             padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
+            /* border: 1px solid #888; */
+            border: none;
+            width: 700px; /* Could be more or less, depending on screen size */
+            text-align: center;
             }
             /* The Close Button */
             .close {
@@ -78,10 +80,11 @@
             }
             /* Modal Content/Box */
             .modal2-content {
-            background-color: #rgba(255,255,255,0.2);
+            background-color: rgba(255,255,255,0);
             margin: 15% auto; /* 15% from the top and centered */
             padding: 20px;
-            border: 1px solid #888;
+            border:none
+            /* border: 1px solid #888; */
             width: 65%; /* Could be more or less, depending on screen size */
             }
             /* The Close Button */
@@ -112,9 +115,9 @@
             <!-- Modal content -->
             <div id="inModal" class="modal-content">
                 <span class="close">&times;</span>
-                <p id="liensite">Some text in the Modal..</p>
+                <p id="liensite"></p>
                 <!-- Trigger/Open The Modal -->
-                <button id="myBtn">Galerie d'imagesl</button>
+                <!-- <button id="myBtn">Galerie d'imagesl</button> -->
                 <!-- <iframe width='640' height='360' src='https://www.youtube.com/embed/RTMUSfsRHoc' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe> -->
             </div>
         </div>
@@ -127,7 +130,7 @@
             <!-- Modal content -->
             <div id="inModal2" class="modal2-content">
                 <span class="close2">&times;</span>
-                <p id="liensite2">Some text in the Modal..</p>
+                <p id="liensite2"></p>
                 <div id="gallery"></div>
             </div>
         </div>
@@ -359,8 +362,8 @@
         function success(info){
             var modal = document.getElementById('myModal');
             var inModal = document.getElementById('inModal');
-            var lien = document.getElementById('liensite');
-            lien.innerHTML="<a href='http://www.2gsi.fr'>"+info.nom+"</a>";
+            // var lien = document.getElementById('liensite');
+            // lien.innerHTML="<a href='http://www.2gsi.fr'>"+info.nom+"</a>";
             // var bouton = document.getElementById("myBtn");
             // bouton.onclick = function() {
             //     showGalerie(info);
@@ -377,14 +380,14 @@
             modal.style.display = "block";
             span.onclick = function() {
                 inModal.removeChild(iframe);
-                lien.innerHTML="";
+                // lien.innerHTML="";
                 modal.style.display = "none";
             }
             // When the user clicks anywhere outside of the modal, close it
             window.onclick = function(event) {
                 if (event.target == modal) {
                     inModal.removeChild(iframe);
-                    lien.innerHTML="";
+                    // lien.innerHTML="";
                     modal.style.display = "none";
                 }
             }            
@@ -393,8 +396,8 @@
             var modal2 = document.getElementById('myModal2');
             var inModal2 = document.getElementById('inModal2');
             var galley = document.getElementById('gallery');
-            var lien2 = document.getElementById('liensite2');
-            lien2.innerHTML="<a href='http://www.2gsi.fr'>"+info.nom+"</a>";
+            // var lien2 = document.getElementById('liensite2');
+            // lien2.innerHTML="<a href='http://www.2gsi.fr'>"+info.nom+"</a>";
             
             info.images.forEach(function(image){
                 var div = document.createElement('div');
@@ -409,13 +412,13 @@
             modal2.style.display = "block";
             span2.onclick = function() {
                 gallery.innerHTML="";
-                lien2.innerHTML="";
+                // lien2.innerHTML="";
                 modal2.style.display = "none";
             }
             window.onclick = function(event2) {
                 if (event2.target == modal2) {
                     gallery.innerHTML="";
-                    lien2.innerHTML="";
+                    // lien2.innerHTML="";
                     modal2.style.display = "none";
                 }
             }    
