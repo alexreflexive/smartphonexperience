@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <meta name="description" content="On essaie de rester compatible iPhone et de faire de la webcam plein écran. L'émulation du navigateur n'en rend pas bien compte, il faut le voir sur un vrai smartphone.">
+</head>
+
+<body id="body">
+    <div style="text-align:center;margin-top:25px">
+        <video id='webcam' width='640' height='480' autoplay playsinline"></video></div>
+    <script>
+        // displayDescription();
+
+        var webcam = document.getElementById('webcam');
+        var videoWidth = Number(webcam.width);
+        var videoHeight = Number(webcam.height);
+
+        var dim = getDimensions();
+        console.log(dim);
+        webcam.width = dim.width;
+        webcam.height = dim.height;
+
+        window.addEventListener("orientationchange", function () {
+            var dim = getDimensions();
+            webcam.width = dim.width;
+            webcam.height = dim.height;
+            console.log(dim);
+        });
+
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    facingMode: 'environment',
+                    // width: dim.width ,
+                    // height: dim.height
+                }
+            })
+                .then(function (stream) {
+                    webcam.srcObject = stream;
+                })
+        }
+
+        function getDimensions() {
+            const LANDSCAPE = "landscape-primary" || "landscape-secondary";
+            const PORTRAIT = "portrait-primary" || "portrait-secondary";
+            if (screen.orientation.type == LANDSCAPE) {
+                returnWidth = 640;
+                returnHeight = 480;
+                console.log("Paysage");
+                if (videoWidth > screen.width) {
+                    console.log("La vidéo plus large que l'écran", videoWidth, screen.width);
+                } else {
+                    console.log("La vidéo plus étroite que l'écran", videoWidth, screen.width);
+                }
+            } else {
+                returnWidth = 480;
+                returnHeight = 640;
+
+                console.log("Portrait");
+                if (videoHeight > screen.height) {
+                    console.log("La vidéo plus haute que l'écran", videoHeight, screen.height);
+                } else {
+                    console.log("La vidéo plus basse que l'écran", videoHeight, screen.height);
+                    // webcam.width = videoWidth * screen.height / videoHeight ;
+                    // webcam.height = screen.height ;
+                }
+            }
+            return { 'width': returnWidth, 'height': returnHeight };
+        }
+
+        function displayDescription() {
+            var description = document.querySelector("meta[name='description']").getAttribute("content");
+            var descriptionTag = document.createElement('p').innerText = description;
+            document.getElementById('body').prepend(descriptionTag);
+        }
+
+    </script>
+</body>
+
+</html>
