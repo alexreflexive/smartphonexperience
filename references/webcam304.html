@@ -1,0 +1,295 @@
+<!doctype html>
+
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="A JavaScript Computer Vision Library">
+        <meta name="author" content="Eugene Zatepyakin">
+        <title>Webcam 304</title>
+        <style>
+            .hiddentemplate{
+                overflow: hidden;
+            }
+            .showntemplate{
+                overflow:visible;
+            }
+        </style>        
+        <script src="js/tracking.js"></script>
+        <script src="js/jsfeat.js"></script>
+        <script src="js/evision.js"></script>
+    </head>
+    <body>
+        <h1>Webcam 304</h1>
+        <video id="webcam" width="640" height="480" style="display:none;" playsinline></video>
+        <!-- <video id="webcam" style="display:none;" playsinline></video> -->
+        <div id="container" style=" width:640px;height:480px;margin: 10px 10px;">
+            <canvas id="canvas" width="640" height="480"></canvas>
+        </div>
+        <button id="display">Masquer les modèles et les correspondances</button>
+        <div id="msgbox"></div>
+
+        <script type="text/javascript">
+        var index=0 ;
+        var images = [];
+        images[0] = new Image();
+        images[1] = new Image();
+        images[2] = new Image();
+        images[3] = new Image();
+        images[4] = new Image();
+        images[5] = new Image();
+        images[0].src = 'images/image.jpg';
+        images[1].src = 'images/photo.jpg';
+        images[2].src = 'images/iconographie.jpg';
+        images[3].src = 'images/pictogramme.jpg';
+        images[4].src = 'images/illustration.jpg';
+        images[5].src = 'images/graphisme.jpg';
+        images[0].title = "Il était une fois dans l'Ouest";
+        images[1].title = 'Les Dents de la mer';
+        images[2].title = 'Indiana Jones';
+        images[3].title = 'Grease';
+        images[4].title = 'Le Parrain';
+        images[5].title = 'Star Wars';
+
+        var messageBox = document.getElementById("msgbox");
+        var showtemplates = true ;
+        var button = document.getElementById('display');
+
+        button.addEventListener('click', function() {
+            if (showtemplates) {
+                container.classList.remove("showntemplate");
+                container.classList.add("hiddentemplate");
+                button.innerText="Afficher les modèles et les correspondances";
+                showtemplates=false;
+                
+            } else {
+                container.classList.remove("hiddentemplate");
+                container.classList.add("showntemplate");                    
+                button.innerText="Masquer les modèles et les correspondances";
+                showtemplates =true;
+            }
+            
+        });
+
+
+
+        window.onload = function(){    
+            "use strict";
+            console.log('window onload');
+
+            var video = document.getElementById('webcam');
+            var canvas = document.getElementById('canvas');
+            var context ;
+
+            if(video.attributes.width){
+                var videoWidth = Number(video.attributes.width.value) ;
+            }else{
+                var videoWidth = 640 ;
+            }
+            if(video.attributes.height){
+                var videoHeight = Number(video.attributes.height.value) ;
+            }else{
+                var videoHeight = 480 ;
+            }
+            
+            // try {
+            //     var attempts = 0;
+            //     var readyListener = function(event) {
+            //         console.log('readyListener');
+            //         findVideoSize();
+            //     };
+            //     var findVideoSize = function() {
+            //         console.log("findVideoSize", video.videoWidth, video.videoHeight);
+            //         if(video.videoWidth > 0 && video.videoHeight > 0) {
+            //             console.log("if videoWidth et videoHeight > 0");
+            //             video.removeEventListener('loadeddata', readyListener);
+            //             onDimensionsReady(video.videoWidth, video.videoHeight);
+            //         } else {
+            //             console.log("else videoWidth et videoHeight > 0");
+            //             if(attempts < 10) {
+            //                 attempts++;
+            //                 setTimeout(findVideoSize, 200);
+            //             } else {
+            //                 onDimensionsReady(videoWidth, videoHeight);
+            //             }
+            //         }
+            //     };
+
+            //     // C'EST D'ICI QUE CA PART
+            //     var onDimensionsReady = function(width, height) {
+            //         demo_app(width, height);
+            //         requestAnimationFrame(tick);
+            //     };
+                ////////////////////////////////////////////////////
+
+                // video.addEventListener('loadeddata', readyListener);
+
+            demo_app(640, 480);
+            requestAnimationFrame(tick);
+
+                getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                }, function(stream) {
+                    try {
+                        video.srcObject = stream;
+                    } catch (error) {
+                        video.src = stream;
+                    }
+                    setTimeout(function() {
+                        video.play();
+                    }, 500);
+                }, function (error) {
+                    console.log("WebRTC not available.");
+                    console.error(error);
+                });
+            // } catch (error) {
+            //     console.log("Something goes wrong...");
+            //     console.error(error);
+            // }
+
+            // var ctx, canvasWidth,canvasHeight;
+            // var ctx;
+
+
+
+            function demo_app(videoWidth, videoHeight) {
+                console.log("demo app") ;
+                // ctx = canvas.getContext('2d');
+                context = canvas.getContext('2d');
+            }
+
+            function tick() {
+                console.log(index) ;
+                console.log(index, images[index].width, images[index]. height)
+                images[index].width = images[index].width * videoHeight / images[index]. height ;
+                images[index].height = videoHeight;
+                var canvasWidth  = videoWidth + images[index].width;
+                var canvasHeight = videoHeight;
+                canvas.width  = canvasWidth;
+                canvas.height = canvasHeight;
+
+                // console.log("image.width: ", images[index].width, " ; videoWidth: ", videoWidth, "canvas.width: ", canvas.width);
+                
+                requestAnimationFrame(tick);
+
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    // ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+                    // ctx.drawImage(image, videoWidth, 0, image.width, image.height);
+                    context.drawImage(video, 0, 0, videoWidth, videoHeight);
+                    context.drawImage(images[index], videoWidth, 0, images[index].width, images[index].height);
+                    //context.clearRect(webcamwin_w, 0, canvas.width-webcamwin_w, canvas.height);
+                    //context.drawImage(images[index], webcamwin_w, 0, images[index].width, images[index].height);                
+                    var matches = evision.tracking.getMatches(context, videoWidth, videoHeight, images[index].width, images[index].height, showtemplates);
+                    var good_matches = find_transform(matches, matches.length) ;
+                    if(good_matches>10){
+                        var msg = images[index].title;
+                        messageBox.innerHTML="J'ai trouvé <em><strong>" + msg + "</strong></em> !";
+                        console.log(msg);
+                        alert(msg);
+                    }                  
+                }
+
+                if(index>=images.length-1){
+                    index=0 ;
+                }else{
+                    index++ ;
+                }
+            }
+
+
+        var homo3x3 = new jsfeat.matrix_t(3, 3, jsfeat.F32C1_t);
+        var match_mask = new jsfeat.matrix_t(500, 1, jsfeat.U8C1_t);
+
+
+        function find_transform(matches, count) {
+            // console.log("find_transform");
+
+            // motion kernel
+            var mm_kernel = new jsfeat.motion_model.homography2d();
+            // ransac params
+            var num_model_points = 4;
+            var reproj_threshold = 3;
+            var ransac_param = new jsfeat.ransac_params_t(num_model_points,
+                reproj_threshold, 0.5, 0.99);
+
+            var pattern_xy = [];
+            var screen_xy = [];
+
+            // construct correspondences
+            for (var i = 0; i < count; ++i) {
+                var m = matches[i];
+                pattern_xy[i] = { "x": m.keypoint1[0], "y": m.keypoint1[1] };
+                screen_xy[i] = { "x": m.keypoint2[0], "y": m.keypoint2[1] };
+            }
+
+            // estimate motion
+            var ok = false;
+            ok = jsfeat.motion_estimator.ransac(ransac_param, mm_kernel,
+                pattern_xy, screen_xy, count, homo3x3, match_mask, 1000);
+
+            var pattern_xy2 = [];
+            var screen_xy2 = [];
+            // extract good matches and re-estimate
+            var good_cnt = 0;
+            if (ok) {
+                for (var i = 0; i < count; ++i) {
+                    if (match_mask.data[i]) {
+                        pattern_xy2[good_cnt] = { "x": pattern_xy[i].x, "y": pattern_xy[i].y };
+                        screen_xy2[good_cnt] = { "x": screen_xy[i].x, "y": screen_xy[i].y };
+                        good_cnt++;
+                    }
+                }
+                // run kernel directly with inliers only
+                mm_kernel.run(pattern_xy2, screen_xy2, homo3x3, good_cnt);
+            } else {
+                jsfeat.matmath.identity_3x3(homo3x3, 1.0);
+            }
+            return good_cnt;
+        }
+
+
+
+            // Compatibilité de la webcam avec différents navigateurs
+            function getUserMedia (options, success, error) {
+                var getUserMedia =
+                    window.navigator.getUserMedia ||
+                    window.navigator.mozGetUserMedia ||
+                    window.navigator.webkitGetUserMedia ||
+                    window.navigator.msGetUserMedia ||
+                    function(options, success, error) {
+                        error();
+                    };
+                return getUserMedia.call(window.navigator, options, success, error);
+            };
+
+            function requestAnimationFrame (callback, element) {
+                var requestAnimationFrame =
+                    window.requestAnimationFrame        || 
+                    window.webkitRequestAnimationFrame  || 
+                    window.mozRequestAnimationFrame     || 
+                    window.oRequestAnimationFrame       ||
+                    window.msRequestAnimationFrame      ||
+                    function(callback, element) {
+                        var currTime = new Date().getTime();
+                        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                        var id = window.setTimeout(function() {
+                            callback(currTime + timeToCall);
+                        }, timeToCall);
+                        lastTime = currTime + timeToCall;
+                        return id;
+                    };
+
+                return requestAnimationFrame.call(window, callback, element);
+            };
+
+            window.addEventListener('unload', function(event) {
+                console.log('addEventListener unload');
+                video.pause();
+                video.src=null;
+            });
+        }
+        </script>
+    </body>
+</html>
