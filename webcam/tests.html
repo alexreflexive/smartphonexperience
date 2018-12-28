@@ -1,70 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Webcam base intervalle</title>
+    <title>Fluid Vidéo</title>
+    <meta name="description" content="Bout de code testatnt la manipulation des dimensions d'une vidéo embarquée. https://css-tricks.com/NetMag/FluidWidthVideo/Article-FluidWidthVideo.php">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
-        .masquer {
-            /* A ajouter à div#canvasContainer pour masquer le canevas webcam+image */
-            max-height: 0px;
-            overflow: hidden;
+        .videoWrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            padding-top: 25px;
+            height: 0;
+        }
+        .videoWrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 5%;
+            width: 90%;
+            height: 90%;
         }
     </style>
 </head>
-
 <body>
-    <!-- Conteneur de la webcam affichée et du canevas normalement masqué. -->
-    <div id='container' style="text-align:center;margin-top:25px">
-        <video id='webcam' width='640' height='480' autoplay playsinline></video>
-        <div id="canvasContainer" class="masquer">
-            <canvas id='canvas'></canvas>
+
+        <div class="videoWrapper">
+            <!-- Copy & Pasted from YouTube -->
+            <iframe width="560" height="349" src="http://www.youtube.com/embed/lT2Kh8L4Yc4?rel=0&hd=1" frameborder="0" allowfullscreen></iframe>
         </div>
-    </div>
+
+    
+    
+
 
     <script>
-        var image = new Image();
-        image.src="images/image.jpg";
-        window.onload = function () {
-            var webcam = document.getElementById('webcam');
-            var videoWidth = Number(webcam.width);
-            var videoHeight = Number(webcam.height);
-
-            var canvas = document.getElementById('canvas');
-            var context = canvas.getContext('2d');
-
-            // Récupération du flux de la webcam et affichage dans la balise video#webcam.
-            if (navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({
-                    audio: false,
-                    video: {
-                        facingMode: 'environment'
-                    }
-                })
-                    .then(function (stream) {
-                        webcam.srcObject = stream;
-                    })
-            }
-
-            // Gestion du flux d'images, le dessin du flux et des images sur le canevas.
-            intervall = window.setInterval(function () {
-
-                image.width = image.width * videoHeight / image.height;
-                image.height = videoHeight;
-
-                canvas.width = videoWidth + image.width;
-                canvas.height = videoHeight;
-
-                context.drawImage(webcam, 0, 0, videoWidth, videoHeight);
-                context.drawImage(image, videoWidth, 0, image.width, image.height);
-
-            }, 20);
-        }
-
-
+        var meta = document.getElementsByName('description')[0];
+        console.log(meta.content);
     </script>
 </body>
-
 </html>
