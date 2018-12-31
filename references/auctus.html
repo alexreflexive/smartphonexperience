@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="A JavaScript Computer Vision Library">
+        <meta name="author" content="Eugene Zatepyakin">
+        <title>Webcam 304 B</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+        <style>
+            .transparent{
+                border:none!important;
+                background-color: rgba(100,100,100,0)!important;
+            }
+
+        </style>        
+
+        <script src="js/tracking.js"></script>
+        <script src="js/jsfeat.js"></script>
+        <script src="js/evision.js"></script>
+
+    </head>
+    <body>
+
+
+    <!-- Modal vidéo -->
+    <div class="modal fade transparent" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModal"
+        aria-hidden="true">
+        <!-- <div class="modal-dialog modal-dialog-xl transparent modal-dialog-centered"> -->
+        <div class="modal-dialog transparent" style="max-width:90%;margin:1rem auto;">
+            <div class="modal-content transparent">
+                <div class="modal-body transparent">
+                    <!-- <button type="button" class="btn btn-outline-dark btn-sm" data-toggle="modal" data-target="#exampleModal">Galerie</button> -->
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe id="myiframe" width="100%" height="350" src="" allowfullscreen allow="accelerometer; autoplay;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal galerie -->
+    <div class="modal fade transparent align-top" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <!-- <div class="modal-dialog modal-lg  modal-dialog-centered transparent align-top" role="document"> -->
+        <div class="modal-dialog transparent align-top" role="document" style="max-width:90%;margin:1rem auto;">
+            <div class="modal-content transparent align-top">
+                <div class="modal-header transparent align-top">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-bod align-topy">
+                    <div id="carouselExampleControls" class="carousel slide align-top" data-ride="carousel" data-interval="2500">
+                        <div class="carousel-inner align-top"></div>
+                        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>        
+
+
+
+
+
+
+
+        <video id="webcam" width="320" height="240" style="display:none;" playsinline></video>
+        <video id="webcam2" width="320" height="240" playsinline></video>
+        <div id="container" style="margin: 10px 10px;display:none;">
+                <canvas id="canvas" width="320" height="240"></canvas>
+        </div>
+		<div id="div-return" style="width:100%;position:absolute;bottom:0;height:2rem;background-color:rgba(255,255,255,0.1);color:blue;text-align:center;font-size:1.5rem;line-height:2rem;">
+			<a href="https://www.suffragium.fr" style="text-align:center;">Retour</a>
+		</div>
+
+
+
+        <script type="text/javascript">
+        var index=0 ;
+        var images = [];
+        images[0] = new Image();
+        images[1] = new Image();
+        images[2] = new Image();
+        images[3] = new Image();
+        images[4] = new Image();
+        images[5] = new Image();
+        images[0].src = 'images/image.jpg';
+        images[1].src = 'images/photo.jpg';
+        images[2].src = 'images/iconographie.jpg';
+        images[3].src = 'images/pictogramme.jpg';
+        images[4].src = 'images/illustration.jpg';
+        images[5].src = 'images/graphisme.jpg';
+        images[0].title = "Il était une fois dans l'Ouest";
+        images[1].title = 'Les Dents de la mer';
+        images[2].title = 'Indiana Jones';
+        images[3].title = 'Grease';
+        images[4].title = 'Le Parrain';
+        images[5].title = 'Star Wars';
+        var infos = [] ;
+        
+        var img = [] ;
+        infos[0]={'type':'autre', 'media':'https://www.youtube.com/embed/lT2Kh8L4Yc4', 'nom': "Il était une fois dans l'Ouest", 'images': img}
+        
+        img = ['jaws_01.jpg','jaws_02.jpg','jaws_03.jpg','jaws_04.jpg','jaws_05.jpg','jaws_06.jpg','jaws_07.jpg','jaws_08.jpg'];
+        infos[1]={'type':'galerie', 'media':'https://www.youtube.com/embed/tVV6prHhyMQ', 'nom': "Les Dents de la mer", 'images': img}
+        
+        img=[];
+        infos[2]={'type':'autre', 'media':'https://www.youtube.com/embed/VDUDbyE0eJc', 'nom': "Indiana Jones", 'images': img}
+
+        img = ['grease_01.jpg','grease_02.jpg','grease_03.jpg','grease_04.jpg','grease_05.jpg'];
+        infos[3]={'type':'youtube', 'media':'https://www.youtube.com/embed/2j17nsmvghi', 'nom': "grease", 'images': img}
+
+        img = ['parrain_01.jpg','parrain_02.jpg','parrain_03.jpg','parrain_04.jpg', 'parrain_05.jpg'];
+        infos[4]={'type':'youtube', 'media':'https://www.youtube.com/embed/X6OJ7MD9YDU', 'nom': "Le Parrain", 'images': img}
+
+        img = ['stars_01.jpg','stars_02.jpg','stars_03.jpg','stars_04.jpg','stars_05.jpg','stars_06.jpg','stars_07.jpg'];
+        infos[5]={'type':'galerie', 'media':'https://www.youtube.com/embed/RTMUSfsRHoc', 'nom': "Star Wars", 'images': img}
+        // console.log(infos);
+        
+        window.onload = function(){    
+            "use strict";
+            console.log('window onload');
+            var hmax = screen.height;
+            var wmax = screen.width;
+            // alert(wmax + '/' + hmax);
+            var video = document.getElementById('webcam');
+            var video2 = document.getElementById('webcam2');
+            var canvas = document.getElementById('canvas');
+			var divreturn = document.getElementById('div-return');
+            var context ;
+            video2.setAttribute("width",wmax);
+            video2.setAttribute("width","100%");
+            video2.setAttribute("height",hmax);
+            video2.setAttribute("height","100%");
+			divreturn.setAttribute("bottom","0");
+            if(video.attributes.width){
+                var videoWidth = Number(video.attributes.width.value) ;
+            }else{
+                var videoWidth = 320 ;
+            }
+            if(video.attributes.height){
+                var videoHeight = Number(video.attributes.height.value) ;
+            }else{
+                var videoHeight = 240 ;
+            }
+            
+            demo_app(640, 480);
+            requestAnimationFrame(tick);
+                getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                }, function(stream) {
+                    try {
+                        video.srcObject = stream;
+                        video2.srcObject = stream;
+                    } catch (error) {
+                        video.src = stream;
+                        video2.src = stream;
+                    }
+                    setTimeout(function() {
+                        video.play();
+                        video2.play();
+                    }, 500);
+                }, function (error) {
+                    console.log("WebRTC not available.");
+                    console.error(error);
+                });
+            function demo_app(videoWidth, videoHeight) {
+                console.log("demo app") ;
+                // ctx = canvas.getContext('2d');
+                context = canvas.getContext('2d');
+            }
+            function tick() {
+                // console.log(index) ;
+                // console.log(index, images[index].width, images[index]. height)
+                images[index].width = images[index].width * videoHeight / images[index]. height ;
+                images[index].height = videoHeight;
+                var canvasWidth  = videoWidth + images[index].width;
+                var canvasHeight = videoHeight;
+                canvas.width  = canvasWidth;
+                canvas.height = canvasHeight;
+               
+                requestAnimationFrame(tick);
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    context.drawImage(video, 0, 0, videoWidth, videoHeight);
+                    context.drawImage(images[index], videoWidth, 0, images[index].width, images[index].height);
+                    var matches = evision.tracking.getMatches(context, videoWidth, videoHeight, images[index].width, images[index].height)
+                    var good_matches = find_transform(matches, matches.length) ;
+                    if(good_matches>10){
+                        if($('body').hasClass('modal-open')){
+                            console.log("Il y a un modal ouvert");
+                        }else{
+                            console.log("il n'y a pas de modal ouvert", index, images[index].title, infos[index].nom);
+                            if(infos[index].type == 'youtube'){
+                                console.log(infos[index].nom);
+                                // Sinon, le temps que le pointeur arrive à autoPlayYouTubeModal l'index a changé.
+                                var film=infos[index] ;
+                                    $("#videoModal").modal();
+                                    $("#videoModal").on('shown.bs.modal', function(){
+                                        console.log("--envoi à autoPlayYouTubeModal");
+                                        console.log("film", film.nom, film.media)
+                                        console.log("infos", infos[index].nom, infos[index].media)
+                                        autoPlayYouTubeModal(film.media);
+                                    });   
+                                    index=0;
+                            }else if(infos[index].type == 'galerie'){
+                                    setSlides(infos[index].images) ;
+                                    $('#exampleModal').modal();                                
+                                    $('#exampleModal').on('hidden.bs.modal', function (e) {
+                                        $(".carousel-inner").empty();
+                                    })                       
+                            }
+                        }
+                    }                  
+                }
+                if(index>=images.length-1){
+                    index=0 ;
+                }else{
+                    index++ ;
+                }
+            }
+        var homo3x3 = new jsfeat.matrix_t(3, 3, jsfeat.F32C1_t);
+        var match_mask = new jsfeat.matrix_t(500, 1, jsfeat.U8C1_t);
+        function find_transform(matches, count) {
+            // console.log("find_transform");
+            // motion kernel
+            var mm_kernel = new jsfeat.motion_model.homography2d();
+            // ransac params
+            var num_model_points = 4;
+            var reproj_threshold = 3;
+            var ransac_param = new jsfeat.ransac_params_t(num_model_points,
+                reproj_threshold, 0.5, 0.99);
+            var pattern_xy = [];
+            var screen_xy = [];
+            // construct correspondences
+            for (var i = 0; i < count; ++i) {
+                var m = matches[i];
+                pattern_xy[i] = { "x": m.keypoint1[0], "y": m.keypoint1[1] };
+                screen_xy[i] = { "x": m.keypoint2[0], "y": m.keypoint2[1] };
+            }
+            // estimate motion
+            var ok = false;
+            ok = jsfeat.motion_estimator.ransac(ransac_param, mm_kernel,
+                pattern_xy, screen_xy, count, homo3x3, match_mask, 1000);
+            var pattern_xy2 = [];
+            var screen_xy2 = [];
+            // extract good matches and re-estimate
+            var good_cnt = 0;
+            if (ok) {
+                for (var i = 0; i < count; ++i) {
+                    if (match_mask.data[i]) {
+                        pattern_xy2[good_cnt] = { "x": pattern_xy[i].x, "y": pattern_xy[i].y };
+                        screen_xy2[good_cnt] = { "x": screen_xy[i].x, "y": screen_xy[i].y };
+                        good_cnt++;
+                    }
+                }
+                // run kernel directly with inliers only
+                mm_kernel.run(pattern_xy2, screen_xy2, homo3x3, good_cnt);
+            } else {
+                jsfeat.matmath.identity_3x3(homo3x3, 1.0);
+            }
+            return good_cnt;
+        }
+            // Compatibilité de la webcam avec différents navigateurs
+            function getUserMedia (options, success, error) {
+                var getUserMedia =
+                    window.navigator.getUserMedia ||
+                    window.navigator.mozGetUserMedia ||
+                    window.navigator.webkitGetUserMedia ||
+                    window.navigator.msGetUserMedia ||
+                    function(options, success, error) {
+                        error();
+                    };
+                return getUserMedia.call(window.navigator, options, success, error);
+            };
+            function requestAnimationFrame (callback, element) {
+                var requestAnimationFrame =
+                    window.requestAnimationFrame        || 
+                    window.webkitRequestAnimationFrame  || 
+                    window.mozRequestAnimationFrame     || 
+                    window.oRequestAnimationFrame       ||
+                    window.msRequestAnimationFrame      ||
+                    function(callback, element) {
+                        var currTime = new Date().getTime();
+                        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                        var id = window.setTimeout(function() {
+                            callback(currTime + timeToCall);
+                        }, timeToCall);
+                        lastTime = currTime + timeToCall;
+                        return id;
+                    };
+                return requestAnimationFrame.call(window, callback, element);
+            };
+            window.addEventListener('unload', function(event) {
+                video.pause();
+                video.src=null;
+            });
+        }
+        </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script>
+
+            //FUNCTION TO GET AND AUTO PLAY YOUTUBE VIDEO FROM DATATAG
+            // https://codepen.io/rnr/pen/PwmXYa
+            // Selon la doc Google, Chrome et Safari n'autorisent pas l'autoplay sur les mobiles : https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations
+            // Pour la taille de la vidéo : 
+                // https://css-tricks.com/NetMag/FluidWidthVideo/Article-FluidWidthVideo.php
+                // https://qualifio.zendesk.com/hc/fr/articles/115012572747-Comment-rendre-un-embed-iframe-video-parfaitement-responsive
+                // https://www.h3xed.com/web-development/how-to-make-a-responsive-100-width-youtube-iframe-embed
+            
+            function autoPlayYouTubeModal(source) {
+                // console.log("source", source);
+                var trigger = $("body").find('[data-toggle="modal"]');
+                trigger.click(function () {});
+                    var theModal = $("#videoModal"),
+                        videoSRC = source,
+                        videoSRCauto = videoSRC + "?loop=1&autoplay=1";
+                    $('#myiframe').attr('src', videoSRCauto);
+                    $('#videoModal' + ' button.close').click(function () {
+                        $('#myiframe').attr('src', videoSRC);
+                    });
+            }         
+
+            function setSlides(images){
+                var first = true ;
+                var carroussel = document.getElementsByClassName("carousel-inner") ;
+                images.forEach(function(image){
+                    // console.log(image);
+                    var slide = new Image();
+                    slide.src="images/contenus_240/" + image ;
+                    slide.classList.add("d-inline", "w-100",);
+                    var divSlide = document.createElement('div');
+                    if(first){
+                        divSlide.classList.add("carousel-item", "active");
+                        divSlide.style.margin = "auto";
+                        first=false;
+                    }else{
+                        divSlide.classList.add("carousel-item");
+                    }
+                    divSlide.appendChild(slide);
+                    carroussel[0].appendChild(divSlide);
+                });
+            }     
+		$(window).resize(function(){
+			var divreturn = document.getElementById('div-return');
+			divreturn.setAttribute("bottom","0");
+		});
+    </script>
+</body>
+
+</html>
